@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { UpdateStatusModal } from "./_components/UpdateStatusModal"
 
 interface Props {
   searchParams: Promise<{ status?: string; skpd?: string }>
@@ -122,6 +123,7 @@ export default async function TemuanPage({ searchParams }: Props) {
               <th className="px-4 py-3 text-center">Severity</th>
               <th className="px-4 py-3 text-center">Status</th>
               <th className="px-4 py-3 text-center">Dibuat</th>
+			  <th className="px-4 py-3 text-center">Aksi</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
@@ -162,6 +164,13 @@ export default async function TemuanPage({ searchParams }: Props) {
                     day: '2-digit', month: '2-digit', year: 'numeric'
                   })}
                 </td>
+				<td className="px-4 py-3 text-center">
+  <UpdateStatusModal
+    findingId={f.id}
+    currentStatus={f.status}
+    judul={f.judul}
+  />
+</td>
               </tr>
             ))}
           </tbody>

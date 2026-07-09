@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { ExportPDFButton } from "./_components/ExportPDFButton"
 
 interface Props {
   searchParams: Promise<{ skpd?: string; status?: string }>
@@ -26,6 +27,16 @@ export default async function MonitoringPage({ searchParams }: Props) {
     },
     orderBy: { nama: "asc" }
   });
+  
+  const findings = await prisma.finding.findMany({
+  where: { status: "OPEN" },
+  include: {
+    webApp: {
+      select: { url: true, skpd: { select: { singkatan: true } } }
+    }
+  },
+  orderBy: { createdAt: "desc" }
+})
 
   // Filter status di aplikasi (bukan DB) karena data dari relasi
   const filtered = webApps.filter(app => {
@@ -44,7 +55,38 @@ export default async function MonitoringPage({ searchParams }: Props) {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Monitoring Layanan Digital</h1>
+      <div className="flex items-center justify-between mb-6">
+  <h1 className="text-2xl font-bold">Monitoring Layanan Digital</h1>
+  <ExportPDFButton data={{
+    totalDomain: webApps.length,
+    online,
+    offline,
+    sslExpired,
+    temuanAktif: findings.length,
+    domains: webApps.map(app => ({
+      nama: app.nama,
+      url: app.url,
+      skpd: app.skpd.singkatan,
+      status: app.checks[0]?.isOnline ? "Online" : app.checks[0] ? "Offline" : "Belum Dicek",
+      statusCode: app.checks[0]?.statusCode ?? null,
+      responseTime: app.checks[0]?.responseTime ?? null,
+      sslValid: app.sslChecks[0]?.isValid ?? null,
+      sslDays: app.sslChecks[0]?.daysRemaining ?? null,
+      headersScore: app.securityHeaderChecks[0]?.score ?? null,
+      checkedAt: app.checks[0]
+        ? new Date(app.checks[0].checkedAt).toLocaleString("id-ID")
+        : null
+    })),
+    findings: findings.map(f => ({
+      domain: f.webApp.url,
+      skpd: f.webApp.skpd.singkatan,
+      judul: f.judul,
+      severity: f.severity,
+      status: f.status,
+      createdAt: new Date(f.createdAt).toLocaleDateString("id-ID")
+    }))
+  }} />
+</div>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-4 gap-4 mb-6">
