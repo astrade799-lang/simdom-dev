@@ -36,3 +36,10 @@ body {
   background-color: #dbeafe;
   color: #1e3a8a;
 }
+
+button, 
+[role="button"],
+select,
+a {
+  cursor: pointer;
+}
