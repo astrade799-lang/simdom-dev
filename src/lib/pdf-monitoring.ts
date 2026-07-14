@@ -144,3 +144,101 @@ export function generateMonitoringPDF(data: MonitoringData) {
   const date = new Date().toISOString().split("T")[0]
   doc.save(`laporan-monitoring-soppeng-${date}.pdf`)
 }
+
+export function generateTemuanPDF(data: {
+  generatedAt: string
+  open: number
+  progress: number
+  done: number
+  findings: {
+    domain: string
+    skpd: string
+    judul: string
+    deskripsi: string | null
+    severity: string
+    status: string
+    createdAt: string
+  }[]
+}) {
+  const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" })
+  const pageWidth = doc.internal.pageSize.getWidth()
+
+  // Header
+  doc.setFillColor(29, 78, 216)
+  doc.rect(0, 0, pageWidth, 25, "F")
+  doc.setTextColor(255, 255, 255)
+  doc.setFontSize(14)
+  doc.setFont("helvetica", "bold")
+  doc.text("LAPORAN TEMUAN LAYANAN DIGITAL", pageWidth / 2, 10, { align: "center" })
+  doc.setFontSize(9)
+  doc.setFont("helvetica", "normal")
+  doc.text("Diskominfo Kabupaten Soppeng", pageWidth / 2, 17, { align: "center" })
+  doc.text(`Digenerate: ${data.generatedAt}`, pageWidth / 2, 22, { align: "center" })
+
+  // KPI
+  const kpiY = 32
+  const kpiData = [
+    { label: "Open", value: data.open, color: [239, 68, 68] as [number, number, number] },
+    { label: "In Progress", value: data.progress, color: [234, 179, 8] as [number, number, number] },
+    { label: "Selesai", value: data.done, color: [34, 197, 94] as [number, number, number] },
+  ]
+
+  kpiData.forEach((kpi, i) => {
+    const x = 14 + i * 54
+    doc.setFillColor(...kpi.color)
+    doc.roundedRect(x, kpiY, 50, 18, 2, 2, "F")
+    doc.setTextColor(255, 255, 255)
+    doc.setFontSize(7)
+    doc.setFont("helvetica", "normal")
+    doc.text(kpi.label, x + 25, kpiY + 6, { align: "center" })
+    doc.setFontSize(16)
+    doc.setFont("helvetica", "bold")
+    doc.text(String(kpi.value), x + 25, kpiY + 14, { align: "center" })
+  })
+
+  // Tabel
+  doc.setTextColor(0, 0, 0)
+  doc.setFontSize(10)
+  doc.setFont("helvetica", "bold")
+  doc.text("DAFTAR TEMUAN", 14, kpiY + 26)
+
+  autoTable(doc, {
+    startY: kpiY + 29,
+    head: [["No", "Domain", "SKPD", "Temuan", "Deskripsi", "Severity", "Status", "Tanggal"]],
+    body: data.findings.map((f, i) => [
+      i + 1,
+      f.domain.replace("https://", ""),
+      f.skpd,
+      f.judul,
+      f.deskripsi ?? "-",
+      f.severity,
+      f.status,
+      f.createdAt
+    ]),
+    styles: { fontSize: 7, cellPadding: 2 },
+    headStyles: { fillColor: [29, 78, 216], textColor: 255, fontStyle: "bold" },
+    alternateRowStyles: { fillColor: [248, 250, 252] },
+    columnStyles: {
+      0: { cellWidth: 8 },
+      4: { cellWidth: 60 },
+    },
+    didParseCell: (hookData) => {
+      if (hookData.section === "body") {
+        if (hookData.column.index === 5) {
+          const val = hookData.cell.raw as string
+          if (val === "HIGH") hookData.cell.styles.textColor = [185, 28, 28]
+          if (val === "MEDIUM") hookData.cell.styles.textColor = [161, 98, 7]
+        }
+        if (hookData.column.index === 6) {
+          const val = hookData.cell.raw as string
+          if (val === "OPEN") hookData.cell.styles.textColor = [185, 28, 28]
+          if (val === "PROGRESS") hookData.cell.styles.textColor = [161, 98, 7]
+          if (val === "DONE") hookData.cell.styles.textColor = [21, 128, 61]
+        }
+      }
+    }
+  })
+
+  const date = new Date().toISOString().split("T")[0]
+  doc.save(`laporan-temuan-soppeng-${date}.pdf`)
+}

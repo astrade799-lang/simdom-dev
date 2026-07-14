@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { UpdateStatusModal } from "./_components/UpdateStatusModal"
+import { ExportTemuanPDFButton } from "./_components/ExportTemuanPDFButton"
 
 interface Props {
   searchParams: Promise<{ status?: string; skpd?: string }>
@@ -53,7 +54,23 @@ export default async function TemuanPage({ searchParams }: Props) {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Manajemen Temuan</h1>
+      <div className="flex items-center justify-between mb-6">
+  <h1 className="text-2xl font-bold">Manajemen Temuan</h1>
+  <ExportTemuanPDFButton data={{
+    open,
+    progress: inProgress,
+    done,
+    findings: findings.map(f => ({
+      domain: f.webApp.url,
+      skpd: f.webApp.skpd.singkatan,
+      judul: f.judul,
+      deskripsi: f.deskripsi,
+      severity: f.severity,
+      status: f.status,
+      createdAt: new Date(f.createdAt).toLocaleDateString("id-ID")
+    }))
+  }} />
+</div>
 
       {/* KPI */}
       <div className="grid grid-cols-3 gap-4 mb-6">
