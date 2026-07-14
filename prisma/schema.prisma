@@ -68,6 +68,7 @@ model WebApp {
   platform       String?
   tanggalAktif   DateTime?
   tanggalExpired DateTime?
+  auditTeknis  AuditTeknis?
   skpdId         String
   skpd           Skpd             @relation(fields: [skpdId], references: [id])
    activities     ActivityReport[]
@@ -187,4 +188,31 @@ model FindingFollowup {
   createdAt   DateTime @default(now())
 
   @@index([findingId])
+}
+
+model AuditTeknis {
+  id                    String    @id @default(cuid())
+  webAppId              String    @unique
+  webApp                WebApp    @relation(fields: [webAppId], references: [id], onDelete: Cascade)
+
+  pageSpeedScore        Int?
+  pageSpeedPerformance  Int?
+  pageSpeedAccessibility Int?
+  pageSpeedBestPractices Int?
+  pageSpeedSeo          Int?
+  pageSpeedCheckedAt    DateTime?
+
+  securityGrade         String?
+  securityStatus        String    @default("BELUM_CEK")
+  securityUrl           String?
+
+  dnsStatus             String    @default("BELUM_CEK")
+  dnsUrl                String?
+
+  teknologi             String?
+  catatan               String?
+
+  updatedAt             DateTime  @updatedAt
+
+  @@index([webAppId])
 }

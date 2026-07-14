@@ -56,6 +56,12 @@ export const NAV_ITEMS: NavItem[] = [
   icon: "bar-chart",
   roles: ["SUPER_ADMIN", "ADMIN", "KABID"],
 },
+{
+  label: "Audit Teknis",
+  href: "/dashboard/audit",
+  icon: "clipboard",
+  roles: ["SUPER_ADMIN", "ADMIN", "KABID"],
+},
 ]
 
 export function getNavByRole(role: Role): NavItem[] {
