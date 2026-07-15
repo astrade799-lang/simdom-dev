@@ -111,6 +111,7 @@ export default async function AuditPage({ searchParams }: Props) {
               <th className="px-4 py-3 text-center">Best Practice</th>
               <th className="px-4 py-3 text-center">SEO</th>
               <th className="px-4 py-3 text-center">Terakhir Dicek</th>
+			  <th className="px-4 py-3 text-center">Audit Manual</th>
               <th className="px-4 py-3 text-center">Aksi</th>
             </tr>
           </thead>
@@ -147,6 +148,14 @@ export default async function AuditPage({ searchParams }: Props) {
                       ? new Date(audit.pageSpeedCheckedAt).toLocaleDateString('id-ID')
                       : 'Belum dicek'}
                   </td>
+				  <td className="px-4 py-3 text-center text-xs text-gray-400">
+  {audit?.updatedAt && audit?.securityStatus !== "BELUM_CEK" || audit?.teknologi || audit?.catatan
+    ? new Date(audit.updatedAt).toLocaleDateString('id-ID', {
+        day: '2-digit', month: '2-digit', year: 'numeric'
+      })
+    : <span className="text-gray-300">Belum diaudit</span>
+  }
+</td>
                   <td className="px-4 py-3 text-center">
                     <Link
                       href={`/dashboard/audit/${app.id}`}
