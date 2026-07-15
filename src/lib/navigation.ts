@@ -51,7 +51,7 @@ export const NAV_ITEMS: NavItem[] = [
     roles: ["SUPER_ADMIN"],
   },
   {
-  label: "Dashboard Eksekutif",
+  label: "Executive Summary",
   href: "/dashboard/executive",
   icon: "bar-chart",
   roles: ["SUPER_ADMIN", "ADMIN", "KABID"],
