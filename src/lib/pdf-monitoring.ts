@@ -242,3 +242,105 @@ export function generateTemuanPDF(data: {
   const date = new Date().toISOString().split("T")[0]
   doc.save(`laporan-temuan-soppeng-${date}.pdf`)
 }
+
+export function generateAuditPDF(data: {
+  generatedAt: string
+  totalDomain: number
+  sudahDiaudit: number
+  avgScore: number
+  domains: {
+    url: string
+    skpd: string
+    pageSpeedScore: number | null
+    pageSpeedPerformance: number | null
+    pageSpeedAccessibility: number | null
+    pageSpeedBestPractices: number | null
+    pageSpeedSeo: number | null
+    pageSpeedCheckedAt: string | null
+    securityStatus: string | null
+    securityGrade: string | null
+    dnsStatus: string | null
+    teknologi: string | null
+    catatan: string | null
+    auditManualAt: string | null
+  }[]
+}) {
+  const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" })
+  const pageWidth = doc.internal.pageSize.getWidth()
+
+  // Header
+  doc.setFillColor(29, 78, 216)
+  doc.rect(0, 0, pageWidth, 25, "F")
+  doc.setTextColor(255, 255, 255)
+  doc.setFontSize(14)
+  doc.setFont("helvetica", "bold")
+  doc.text("LAPORAN AUDIT TEKNIS LAYANAN DIGITAL", pageWidth / 2, 10, { align: "center" })
+  doc.setFontSize(9)
+  doc.setFont("helvetica", "normal")
+  doc.text("Diskominfo Kabupaten Soppeng", pageWidth / 2, 17, { align: "center" })
+  doc.text(`Digenerate: ${data.generatedAt}`, pageWidth / 2, 22, { align: "center" })
+
+  // KPI
+  const kpiY = 32
+  const kpiData = [
+    { label: "Total Domain", value: data.totalDomain, color: [59, 130, 246] as [number, number, number] },
+    { label: "Sudah Diaudit", value: data.sudahDiaudit, color: [34, 197, 94] as [number, number, number] },
+    { label: "Belum Diaudit", value: data.totalDomain - data.sudahDiaudit, color: [239, 68, 68] as [number, number, number] },
+    { label: "Rata-rata Score", value: data.avgScore > 0 ? `${data.avgScore}/100` : '-', color: [139, 92, 246] as [number, number, number] },
+  ]
+
+  kpiData.forEach((kpi, i) => {
+    const x = 14 + i * 68
+    doc.setFillColor(...kpi.color)
+    doc.roundedRect(x, kpiY, 62, 18, 2, 2, "F")
+    doc.setTextColor(255, 255, 255)
+    doc.setFontSize(7)
+    doc.setFont("helvetica", "normal")
+    doc.text(kpi.label, x + 31, kpiY + 6, { align: "center" })
+    doc.setFontSize(14)
+    doc.setFont("helvetica", "bold")
+    doc.text(String(kpi.value), x + 31, kpiY + 14, { align: "center" })
+  })
+
+  // Tabel
+  doc.setTextColor(0, 0, 0)
+  doc.setFontSize(10)
+  doc.setFont("helvetica", "bold")
+  doc.text("DETAIL AUDIT TEKNIS", 14, kpiY + 26)
+
+  autoTable(doc, {
+    startY: kpiY + 29,
+    head: [["Domain", "SKPD", "Overall", "Perf", "Access", "BP", "SEO", "PageSpeed Dicek", "Security", "DNS", "Teknologi", "Audit Manual"]],
+    body: data.domains.map(d => [
+      d.url.replace("https://", ""),
+      d.skpd,
+      d.pageSpeedScore ?? '-',
+      d.pageSpeedPerformance ?? '-',
+      d.pageSpeedAccessibility ?? '-',
+      d.pageSpeedBestPractices ?? '-',
+      d.pageSpeedSeo ?? '-',
+      d.pageSpeedCheckedAt ?? 'Belum',
+      d.securityGrade ? `${d.securityStatus} (${d.securityGrade})` : d.securityStatus ?? '-',
+      d.dnsStatus ?? '-',
+      d.teknologi ?? '-',
+      d.auditManualAt ?? 'Belum'
+    ]),
+    styles: { fontSize: 6, cellPadding: 1.5 },
+    headStyles: { fillColor: [29, 78, 216], textColor: 255, fontStyle: "bold" },
+    alternateRowStyles: { fillColor: [248, 250, 252] },
+    columnStyles: {
+      10: { cellWidth: 35 },
+    },
+    didParseCell: (hookData) => {
+      if (hookData.section === "body" && hookData.column.index === 2) {
+        const val = Number(hookData.cell.raw)
+        if (val >= 90) hookData.cell.styles.textColor = [21, 128, 61]
+        else if (val >= 50) hookData.cell.styles.textColor = [161, 98, 7]
+        else if (val > 0) hookData.cell.styles.textColor = [185, 28, 28]
+      }
+    }
+  })
+
+  const date = new Date().toISOString().split("T")[0]
+  doc.save(`laporan-audit-soppeng-${date}.pdf`)
+}

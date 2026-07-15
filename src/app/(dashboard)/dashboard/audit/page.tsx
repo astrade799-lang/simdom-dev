@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
+import { ExportAuditPDFButton } from "./_components/ExportAuditPDFButton"
 
 interface Props {
   searchParams: Promise<{ skpd?: string }>
@@ -50,13 +51,44 @@ export default async function AuditPage({ searchParams }: Props) {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Audit Teknis Domain</h1>
-          <p className="text-sm text-slate-400 mt-0.5">Hasil audit performa dan keamanan per domain</p>
-        </div>
+  <div className="space-y-6">
+    <div className="flex items-center justify-between">
+      <div>
+        <h1 className="text-2xl font-bold text-slate-900">Audit Teknis Domain</h1>
+        <p className="text-sm text-slate-400 mt-0.5">Hasil audit performa dan keamanan per domain</p>
       </div>
+      <ExportAuditPDFButton data={{
+        totalDomain: webApps.length,
+        sudahDiaudit: sudahDicek,
+        avgScore,
+        domains: webApps.map(app => ({
+          url: app.url,
+          skpd: app.skpd.singkatan,
+          pageSpeedScore: app.auditTeknis?.pageSpeedScore ?? null,
+          pageSpeedPerformance: app.auditTeknis?.pageSpeedPerformance ?? null,
+          pageSpeedAccessibility: app.auditTeknis?.pageSpeedAccessibility ?? null,
+          pageSpeedBestPractices: app.auditTeknis?.pageSpeedBestPractices ?? null,
+          pageSpeedSeo: app.auditTeknis?.pageSpeedSeo ?? null,
+          pageSpeedCheckedAt: app.auditTeknis?.pageSpeedCheckedAt
+            ? new Date(app.auditTeknis.pageSpeedCheckedAt).toLocaleDateString("id-ID")
+            : null,
+          securityStatus: app.auditTeknis?.securityStatus ?? null,
+          securityGrade: app.auditTeknis?.securityGrade ?? null,
+          dnsStatus: app.auditTeknis?.dnsStatus ?? null,
+          teknologi: app.auditTeknis?.teknologi ?? null,
+          catatan: app.auditTeknis?.catatan ?? null,
+          auditManualAt: app.auditTeknis && (
+            app.auditTeknis.securityStatus !== "BELUM_CEK" ||
+            app.auditTeknis.dnsStatus !== "BELUM_CEK" ||
+            app.auditTeknis.teknologi ||
+            app.auditTeknis.catatan
+          )
+            ? new Date(app.auditTeknis.updatedAt).toLocaleDateString("id-ID")
+            : null
+        }))
+      }} />
+    </div>
+    {/* KPI cards selanjutnya */}
 
       <div className="grid grid-cols-3 gap-4">
   <div className="rounded-2xl bg-gradient-to-br from-blue-600 to-blue-700 p-5 text-white shadow-lg shadow-blue-200">
