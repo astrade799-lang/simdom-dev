@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { saveAuditManual } from "../actions"
+import { useRouter } from "next/navigation"
 
 interface AuditData {
   securityGrade?: string | null
@@ -19,6 +20,7 @@ interface Props {
 }
 
 export function AuditManualForm({ webAppId, audit }: Props) {
+const router = useRouter()
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [form, setForm] = useState({
@@ -30,13 +32,16 @@ export function AuditManualForm({ webAppId, audit }: Props) {
     teknologi: audit?.teknologi ?? "",
     catatan: audit?.catatan ?? "",
   })
+  
 
   async function handleSave() {
     setSaving(true)
     await saveAuditManual(webAppId, form)
     setSaving(false)
     setSaved(true)
-    setTimeout(() => setSaved(false), 2000)
+    setTimeout(() => {
+      router.push("/dashboard/audit")
+    }, 1000)
   }
 
   return (

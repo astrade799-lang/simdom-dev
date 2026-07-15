@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter, usePathname, useSearchParams } from "next/navigation"
 import { deleteDomain } from "@/actions/domain"
 import { StatusBadge } from "@/components/ui/Badge"
@@ -66,6 +66,15 @@ export function DomainTable({
 const [detailDomain, setDetailDomain] = useState<WebApp | null>(null)
 const [isDetailOpen, setIsDetailOpen] = useState(false)
 const [isImportOpen, setIsImportOpen] = useState(false)
+
+useEffect(() => {
+  const timer = setTimeout(() => {
+    if (searchInput !== currentSearch) {
+      updateFilter("search", searchInput)
+    }
+  }, 500)
+  return () => clearTimeout(timer)
+}, [searchInput])
 
   const totalPages = Math.ceil(total / pageSize)
   const canEdit = userRole === "SUPER_ADMIN" || userRole === "ADMIN"
