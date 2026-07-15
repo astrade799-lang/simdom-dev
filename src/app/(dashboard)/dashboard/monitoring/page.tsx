@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { ExportPDFButton } from "./_components/ExportPDFButton"
+import Link from "next/link"
 
 interface Props {
   searchParams: Promise<{ skpd?: string; status?: string }>
@@ -88,25 +89,29 @@ export default async function MonitoringPage({ searchParams }: Props) {
   }} />
 </div>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-4 gap-4 mb-6">
-        <div className="bg-blue-500 text-white rounded-lg p-4">
-          <p className="text-sm opacity-80">Total Domain</p>
-          <p className="text-3xl font-bold">{webApps.length}</p>
-        </div>
-        <div className="bg-green-500 text-white rounded-lg p-4">
-          <p className="text-sm opacity-80">Online</p>
-          <p className="text-3xl font-bold">{online}</p>
-        </div>
-        <div className="bg-red-500 text-white rounded-lg p-4">
-          <p className="text-sm opacity-80">Offline</p>
-          <p className="text-3xl font-bold">{offline}</p>
-        </div>
-        <div className="bg-yellow-500 text-white rounded-lg p-4">
-          <p className="text-sm opacity-80">SSL Bermasalah</p>
-          <p className="text-3xl font-bold">{sslExpired}</p>
-        </div>
-      </div>
+     
+	  {/* KPI Cards */}
+<div className="grid grid-cols-4 gap-4 mb-6">
+  <div className="bg-blue-500 text-white rounded-lg p-4">
+    <p className="text-sm opacity-80">Total Domain</p>
+    <p className="text-3xl font-bold">{webApps.length}</p>
+  </div>
+  <Link href="/dashboard/monitoring?status=online" className="bg-green-500 text-white rounded-lg p-4 hover:bg-green-600 transition-colors cursor-pointer">
+    <p className="text-sm opacity-80">Online</p>
+    <p className="text-3xl font-bold">{online}</p>
+    <p className="text-xs opacity-70 mt-1">Klik untuk filter</p>
+  </Link>
+  <Link href="/dashboard/monitoring?status=offline" className="bg-red-500 text-white rounded-lg p-4 hover:bg-red-600 transition-colors cursor-pointer">
+    <p className="text-sm opacity-80">Offline</p>
+    <p className="text-3xl font-bold">{offline}</p>
+    <p className="text-xs opacity-70 mt-1">Klik untuk filter</p>
+  </Link>
+  <Link href="/dashboard/monitoring?status=offline" className="bg-yellow-500 text-white rounded-lg p-4 hover:bg-yellow-600 transition-colors cursor-pointer">
+    <p className="text-sm opacity-80">SSL Bermasalah</p>
+    <p className="text-3xl font-bold">{sslExpired}</p>
+    <p className="text-xs opacity-70 mt-1">Klik untuk filter</p>
+  </Link>
+</div>
 
       {/* Filter Bar */}
       <div className="bg-white rounded-lg shadow p-4 mb-4 flex gap-4 items-center flex-wrap">

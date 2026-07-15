@@ -7,17 +7,20 @@ interface Props {
 
 export default async function AuditPage({ searchParams }: Props) {
   const params = await searchParams
-  const { skpd } = params
+  const { skpd, diaudit } = params  // ← destructure di sini
 
   const skpdList = await prisma.skpd.findMany({
     orderBy: { singkatan: "asc" },
     select: { id: true, singkatan: true }
   })
 
+  const diauditFilter = diaudit === "true"  // ← rename biar tidak konflik
+
   const webApps = await prisma.webApp.findMany({
     where: {
       status: "AKTIF",
-      ...(skpd ? { skpdId: skpd } : {})
+      ...(skpd ? { skpdId: skpd } : {}),
+      ...(diauditFilter ? { auditTeknis: { pageSpeedScore: { not: null } } } : {})
     },
     include: {
       skpd: { select: { singkatan: true } },
@@ -55,23 +58,22 @@ export default async function AuditPage({ searchParams }: Props) {
         </div>
       </div>
 
-      {/* KPI */}
       <div className="grid grid-cols-3 gap-4">
-        <div className="rounded-2xl bg-gradient-to-br from-blue-600 to-blue-700 p-5 text-white shadow-lg shadow-blue-200">
-          <p className="text-xs font-semibold text-blue-100 uppercase tracking-wider">Total Domain</p>
-          <p className="text-4xl font-bold mt-2">{webApps.length}</p>
-        </div>
-        <div className="rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 p-5 text-white shadow-lg shadow-emerald-200">
-          <p className="text-xs font-semibold text-emerald-100 uppercase tracking-wider">Sudah Diaudit</p>
-          <p className="text-4xl font-bold mt-2">{sudahDicek}</p>
-          <p className="text-xs text-emerald-100 mt-1">PageSpeed tersedia</p>
-        </div>
-        <div className="rounded-2xl bg-gradient-to-br from-violet-600 to-violet-700 p-5 text-white shadow-lg shadow-violet-200">
-          <p className="text-xs font-semibold text-violet-100 uppercase tracking-wider">Rata-rata Score</p>
-          <p className="text-4xl font-bold mt-2">{avgScore > 0 ? `${avgScore}/100` : '-'}</p>
-          <p className="text-xs text-violet-100 mt-1">PageSpeed overall</p>
-        </div>
-      </div>
+  <div className="rounded-2xl bg-gradient-to-br from-blue-600 to-blue-700 p-5 text-white shadow-lg shadow-blue-200">
+    <p className="text-xs font-semibold text-blue-100 uppercase tracking-wider">Total Domain</p>
+    <p className="text-4xl font-bold mt-2">{webApps.length}</p>
+  </div>
+  <Link href="/dashboard/audit?diaudit=true" className="rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 p-5 text-white shadow-lg shadow-emerald-200 hover:opacity-90 transition-opacity">
+    <p className="text-xs font-semibold text-emerald-100 uppercase tracking-wider">Sudah Diaudit</p>
+    <p className="text-4xl font-bold mt-2">{sudahDicek}</p>
+    <p className="text-xs text-emerald-100 mt-1">Klik untuk filter</p>
+  </Link>
+  <div className="rounded-2xl bg-gradient-to-br from-violet-600 to-violet-700 p-5 text-white shadow-lg shadow-violet-200">
+    <p className="text-xs font-semibold text-violet-100 uppercase tracking-wider">Rata-rata Score</p>
+    <p className="text-4xl font-bold mt-2">{avgScore > 0 ? `${avgScore}/100` : '-'}</p>
+    <p className="text-xs text-violet-100 mt-1">PageSpeed overall</p>
+  </div>
+</div>
 
       {/* Filter */}
       <div className="bg-white rounded-lg shadow p-4">

@@ -72,21 +72,23 @@ export default async function TemuanPage({ searchParams }: Props) {
   }} />
 </div>
 
-      {/* KPI */}
       <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="bg-red-500 text-white rounded-lg p-4">
-          <p className="text-sm opacity-80">Open</p>
-          <p className="text-3xl font-bold">{open}</p>
-        </div>
-        <div className="bg-yellow-500 text-white rounded-lg p-4">
-          <p className="text-sm opacity-80">In Progress</p>
-          <p className="text-3xl font-bold">{inProgress}</p>
-        </div>
-        <div className="bg-green-500 text-white rounded-lg p-4">
-          <p className="text-sm opacity-80">Selesai</p>
-          <p className="text-3xl font-bold">{done}</p>
-        </div>
-      </div>
+  <Link href="/dashboard/monitoring/temuan?status=OPEN" className="bg-red-500 text-white rounded-lg p-4 hover:bg-red-600 transition-colors">
+    <p className="text-sm opacity-80">Open</p>
+    <p className="text-3xl font-bold">{open}</p>
+    <p className="text-xs opacity-70 mt-1">Klik untuk filter</p>
+  </Link>
+  <Link href="/dashboard/monitoring/temuan?status=PROGRESS" className="bg-yellow-500 text-white rounded-lg p-4 hover:bg-yellow-600 transition-colors">
+    <p className="text-sm opacity-80">In Progress</p>
+    <p className="text-3xl font-bold">{inProgress}</p>
+    <p className="text-xs opacity-70 mt-1">Klik untuk filter</p>
+  </Link>
+  <Link href="/dashboard/monitoring/temuan?status=DONE" className="bg-green-500 text-white rounded-lg p-4 hover:bg-green-600 transition-colors">
+    <p className="text-sm opacity-80">Selesai</p>
+    <p className="text-3xl font-bold">{done}</p>
+    <p className="text-xs opacity-70 mt-1">Klik untuk filter</p>
+  </Link>
+</div>
 
       {/* Filter */}
       <div className="bg-white rounded-lg shadow p-4 mb-4">
