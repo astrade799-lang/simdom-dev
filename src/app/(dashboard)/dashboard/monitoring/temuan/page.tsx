@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { UpdateStatusModal } from "./_components/UpdateStatusModal"
 import { ExportTemuanPDFButton } from "./_components/ExportTemuanPDFButton"
+import Link from "next/link"
 
 interface Props {
   searchParams: Promise<{ status?: string; skpd?: string }>
