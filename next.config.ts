@@ -7,14 +7,19 @@ const nextConfig: NextConfig = {
     },
   },
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "rzofrnlylwvlfjvxfems.supabase.co",  // ← Fix 3: izinkan gambar dari Supabase
-        pathname: "/storage/v1/object/public/**",
-      },
-    ],
-  },
+  remotePatterns: [
+    {
+      protocol: "https",
+      hostname: "rzofrnlylwvlfjvxfems.supabase.co",
+      pathname: "/storage/v1/object/public/**",
+    },
+    {
+      protocol: "https",
+      hostname: "btbtoirqcmdqhaedcqxz.supabase.co",
+      pathname: "/storage/v1/object/public/**",
+    },
+  ],
+},
 }
 
 export default nextConfig
