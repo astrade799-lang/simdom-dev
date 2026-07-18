@@ -62,6 +62,12 @@ export const NAV_ITEMS: NavItem[] = [
   icon: "clipboard",
   roles: ["SUPER_ADMIN", "ADMIN", "KABID"],
 },
+{
+  label: "Panduan",
+  href: "/dashboard/panduan",
+  icon: "book",
+  roles: ["SUPER_ADMIN", "ADMIN", "KABID"],
+},
 ]
 
 export function getNavByRole(role: Role): NavItem[] {

@@ -39,6 +39,7 @@ export function TopBar({ userName, userRole }: Props) {
           <span>Online</span>
         </div>
 
+
         {/* Divider */}
         <div className="h-4 w-px bg-slate-200" />
 
