@@ -3,7 +3,7 @@ import Link from "next/link"
 import { ExportAuditPDFButton } from "./_components/ExportAuditPDFButton"
 
 interface Props {
-  searchParams: Promise<{ skpd?: string }>
+  searchParams: Promise<{ skpd?: string; diaudit?: string }>
 }
 
 export default async function AuditPage({ searchParams }: Props) {
