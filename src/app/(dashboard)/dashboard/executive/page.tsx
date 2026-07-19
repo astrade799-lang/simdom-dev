@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
+import { TrendChart } from "./_components/TrendChart"
 
 export default async function ExecutivePage() {
   const [
@@ -7,11 +8,13 @@ export default async function ExecutivePage() {
     online,
     offline,
     sslExpired,
+	trendData,
     temuanOpen,
     temuanProgress,
     temuanDone,
     skpdStats,
     temuanTerbaru,
+	
   ] = await Promise.all([
     prisma.webApp.count({ where: { status: "AKTIF" } }),
     prisma.webApp.count({
@@ -32,6 +35,24 @@ export default async function ExecutivePage() {
         sslChecks: { some: { isValid: false, checkedAt: { gte: new Date(Date.now() - 1000 * 60 * 60 * 48) } } }
       }
     }),
+	
+	// Tambah query tren
+prisma.$queryRaw`
+  SELECT 
+    DATE("checkedAt")::text as tanggal,
+    COUNT(DISTINCT "webAppId") FILTER (WHERE "isOnline" = true)::int as online,
+    COUNT(DISTINCT "webAppId") FILTER (WHERE "isOnline" = false)::int as offline
+  FROM "DomainCheck"
+  WHERE "checkedAt" IN (
+    SELECT MAX("checkedAt") 
+    FROM "DomainCheck" 
+    GROUP BY "webAppId", DATE("checkedAt")
+  )
+  GROUP BY DATE("checkedAt")
+  ORDER BY tanggal ASC
+  LIMIT 30
+` as Promise<{ tanggal: string; online: number; offline: number }[]>,
+	
     prisma.finding.count({ where: { status: "OPEN" } }),
     prisma.finding.count({ where: { status: "PROGRESS" } }),
     prisma.finding.count({ where: { status: "DONE" } }),
@@ -59,6 +80,7 @@ export default async function ExecutivePage() {
       orderBy: { createdAt: "desc" },
       take: 10
     })
+	
   ])
 
   const onlinePct = totalDomain > 0 ? Math.round((online / totalDomain) * 100) : 0
@@ -162,6 +184,11 @@ export default async function ExecutivePage() {
           </table>
         </div>
       </div>
+	  
+	  <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+  <h2 className="text-sm font-bold text-slate-900 mb-4">Tren Uptime 30 Hari Terakhir</h2>
+  <TrendChart data={trendData} />
+</div>
 
       {/* Temuan Terbaru */}
       <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
