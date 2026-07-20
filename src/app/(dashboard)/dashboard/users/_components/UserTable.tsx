@@ -11,6 +11,7 @@ type User = {
   name: string
   namaLengkap: string | null  // ← TAMBAH
   nip: string | null          // ← TAMBAH
+  jabatan?: string | null 
   email: string
   role: Role
   skpdId: string | null
