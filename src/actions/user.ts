@@ -32,6 +32,7 @@ export async function createUser(formData: FormData): Promise<ActionResult> {
     const raw = {
       name: formData.get("name") as string,
       email: formData.get("email") as string,
+	  jabatan: formData.get("jabatan") as string,
       password: formData.get("password") as string,
       role: formData.get("role") as string,
       skpdId: (formData.get("skpdId") as string) || null,
@@ -65,6 +66,7 @@ export async function updateUser(id: string, formData: FormData): Promise<Action
     const raw = {
       name: formData.get("name") as string,
       email: formData.get("email") as string,
+	  jabatan: formData.get("jabatan") as string,
       role: formData.get("role") as string,
       skpdId: (formData.get("skpdId") as string) || null,
     }

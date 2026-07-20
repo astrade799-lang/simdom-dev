@@ -16,10 +16,11 @@ const ROLE_LABEL: Record<string, string> = {
 interface Props {
   userName: string
   userRole: Role
+  jabatan?: string | null 
   children: React.ReactNode
 }
 
-export function MobileSidebarWrapper({ userName, userRole, children }: Props) {
+export function MobileSidebarWrapper({ userName, userRole, jabatan, children }: Props) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const pathname = usePathname()
 
@@ -34,7 +35,7 @@ export function MobileSidebarWrapper({ userName, userRole, children }: Props) {
 
       {/* Sidebar desktop — selalu tampil */}
       <div className="hidden md:block flex-shrink-0">
-        <Sidebar userName={userName} userRole={userRole} />
+		 <Sidebar userName={userName} userRole={userRole} jabatan={jabatan} />
       </div>
 
       {/* Sidebar mobile — overlay */}

@@ -30,7 +30,8 @@ model User {
   email     String   @unique
   name      String
   namaLengkap  String?
-  nip          String? 
+  nip          String?
+jabatan     String?
   password  String
   role      Role     @default(ADMIN)
   skpdId    String?

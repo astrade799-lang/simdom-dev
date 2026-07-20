@@ -31,6 +31,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           name: user.name,
           role: user.role,
           skpdId: user.skpdId,
+		  jabatan: user.jabatan, 
         }
       },
     }),
@@ -42,6 +43,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.id = user.id as string
         token.role = user.role as Role
         token.skpdId = (user.skpdId as string | null) ?? null
+		token.jabatan = (user.jabatan as string | null) ?? null
       }
       return token
     },
@@ -49,6 +51,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       session.user.id = token.id as string
       session.user.role = token.role as Role
       session.user.skpdId = token.skpdId as string | null
+	  session.user.jabatan = token.jabatan as string | null
       return session
     },
   },

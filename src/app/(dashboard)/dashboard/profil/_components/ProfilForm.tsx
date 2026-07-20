@@ -2,19 +2,22 @@
 
 import { useState } from "react"
 import { updateProfil, updatePassword } from "../actions"
+import { useRouter } from "next/navigation"
 
 interface Props {
   userId: string
   currentEmail: string
   currentName: string
+  currentJabatan?: string | null
 }
-
-export function ProfilForm({ userId, currentEmail, currentName }: Props) {
+export function ProfilForm({ userId, currentEmail, currentName, currentJabatan }: Props) {
   const [name, setName] = useState(currentName)
   const [email, setEmail] = useState(currentEmail)
   const [savingProfil, setSavingProfil] = useState(false)
+  const router = useRouter()
+  
   const [profilMsg, setProfilMsg] = useState<{ text: string; ok: boolean } | null>(null)
-
+const [jabatan, setJabatan] = useState(currentJabatan ?? "")
   const [oldPassword, setOldPassword] = useState("")
   const [newPassword, setNewPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
@@ -24,9 +27,12 @@ export function ProfilForm({ userId, currentEmail, currentName }: Props) {
   async function handleSaveProfil() {
     setSavingProfil(true)
     setProfilMsg(null)
-    const result = await updateProfil(userId, { name, email })
+	const result = await updateProfil(userId, { name, email, jabatan })
     setSavingProfil(false)
     setProfilMsg({ text: result.message, ok: result.success })
+	if (result.success) {
+    router.refresh()  // ← tambah ini
+  }
   }
 
   async function handleSavePassword() {
@@ -67,6 +73,17 @@ export function ProfilForm({ userId, currentEmail, currentName }: Props) {
             className={inputClass}
           />
         </div>
+		
+		<div>
+  <label className="text-xs font-semibold text-slate-500 uppercase block mb-1">Jabatan</label>
+  <input
+    type="text"
+    value={jabatan}
+    onChange={e => setJabatan(e.target.value)}
+    placeholder="mis: Kepala Dinas, Kabid , Kasubag"
+    className={inputClass}
+  />
+</div>
 
         <div>
           <label className="text-xs font-semibold text-slate-500 uppercase block mb-1">Email</label>

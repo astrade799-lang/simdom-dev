@@ -20,10 +20,12 @@ export default async function DashboardLayout({
   if (!session) redirect("/login")
 
   return (
-    <MobileSidebarWrapper
-      userName={session.user.name ?? "User"}
-      userRole={session.user.role}
-    >
+    
+	<MobileSidebarWrapper
+  userName={session.user.name ?? "User"}
+  userRole={session.user.role}
+  jabatan={session.user.jabatan}
+>
       {children}
     </MobileSidebarWrapper>
   )

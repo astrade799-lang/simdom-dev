@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
 import { revalidatePath } from "next/cache"
 
-export async function updateProfil(userId: string, data: { name: string; email: string }) {
+export async function updateProfil(userId: string, data: { name: string; email: string; jabatan: string }) {
   try {
     const existing = await prisma.user.findFirst({
       where: { email: data.email, NOT: { id: userId } }
@@ -13,7 +13,7 @@ export async function updateProfil(userId: string, data: { name: string; email: 
 
     await prisma.user.update({
       where: { id: userId },
-      data: { name: data.name, email: data.email }
+      data: { name: data.name, email: data.email, jabatan: data.jabatan || null }
     })
 
     revalidatePath("/dashboard/profil")

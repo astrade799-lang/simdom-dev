@@ -4,6 +4,7 @@ declare module "next-auth" {
   interface User {
     role: Role
     skpdId: string | null
+	jabatan: string | null
   }
 
   interface Session {
@@ -13,6 +14,7 @@ declare module "next-auth" {
       name: string
       role: Role
       skpdId: string | null
+	  jabatan: string | null
     }
   }
 }
@@ -22,5 +24,6 @@ declare module "next-auth/jwt" {
     id: string
     role: Role
     skpdId: string | null
+	jabatan: string | null
   }
 }

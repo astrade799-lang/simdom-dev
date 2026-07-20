@@ -15,11 +15,12 @@ export default async function ProfilPage() {
         <h1 className="text-2xl font-bold text-slate-900">Profil Saya</h1>
         <p className="text-sm text-slate-400 mt-0.5">Kelola informasi akun dan keamanan</p>
       </div>
-      <ProfilForm
-        userId={session.user.id}
-        currentEmail={session.user.email ?? ""}
-        currentName={session.user.name ?? ""}
-      />
+	  <ProfilForm
+  userId={session.user.id}
+  currentEmail={session.user.email ?? ""}
+  currentName={session.user.name ?? ""}
+  currentJabatan={session.user.jabatan ?? ""}
+/>
     </div>
   )
 }

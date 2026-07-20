@@ -10,6 +10,7 @@ type User = {
   name: string
   namaLengkap: string | null  // ← TAMBAH
   nip: string | null          // ← TAMBAH
+  jabatan: string | null 
   email: string
   role: Role
   skpdId: string | null
@@ -95,6 +96,20 @@ export function UserModal({ isOpen, onClose, user, skpds }: UserModalProps) {
             className={inputClass}
           />
         </div>
+		
+		{/* Jabatan */}
+<div>
+  <label className={labelClass}>
+    Jabatan
+    <span className="ml-1 text-xs font-normal text-gray-400">(ditampilkan di sidebar & laporan)</span>
+  </label>
+  <input
+    name="jabatan"
+    defaultValue={user?.jabatan ?? ""}
+    placeholder="mis: Kepala Dinas, Kabid Infrastruktur, Kasubag TI"
+    className={inputClass}
+  />
+</div>
 
         <div>
           <label className={labelClass}>Email <span className="text-red-500">*</span></label>

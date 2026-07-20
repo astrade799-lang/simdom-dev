@@ -15,6 +15,7 @@ const ROLE_LABEL: Record<Role, string> = {
 interface SidebarProps {
   userName: string
   userRole: Role
+  jabatan?: string | null
 }
 
 const ICONS: Record<string, React.ReactNode> = {
@@ -108,7 +109,7 @@ function BrandIcon() {
   )
 }
 
-export function Sidebar({ userName, userRole }: SidebarProps) {
+export function Sidebar({ userName, userRole, jabatan }: SidebarProps) {
   const pathname = usePathname()
   const navItems = getNavByRole(userRole)
 
@@ -173,7 +174,9 @@ export function Sidebar({ userName, userRole }: SidebarProps) {
   </div>
   <div className="min-w-0 flex-1">
     <p className="truncate text-xs font-semibold text-slate-200">{userName}</p>
-    <p className="text-[10px] text-slate-500">{ROLE_LABEL[userRole]}</p>
+    <p className="text-[10px] text-slate-500">
+  {jabatan || ROLE_LABEL[userRole]}
+</p>
   </div>
   {/* Ikon settings */}
   <svg className="h-3.5 w-3.5 text-slate-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
