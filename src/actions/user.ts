@@ -51,6 +51,7 @@ export async function createUser(formData: FormData): Promise<ActionResult> {
         skpdId: validated.data.skpdId || null,
         namaLengkap: (formData.get("namaLengkap") as string) || null,
         nip: (formData.get("nip") as string) || null,
+		jabatan: (formData.get("jabatan") as string) || null, 
       },
     })
     revalidatePath("/dashboard/users")
@@ -83,6 +84,7 @@ export async function updateUser(id: string, formData: FormData): Promise<Action
         skpdId: validated.data.skpdId || null,
         namaLengkap: (formData.get("namaLengkap") as string) || null,
         nip: (formData.get("nip") as string) || null,
+		jabatan: (formData.get("jabatan") as string) || null,
       },
     })
     revalidatePath("/dashboard/users")
