@@ -24,15 +24,15 @@ export async function createLaporanFromAction({
 
   try {
     const result = await prisma.activityReport.create({
-      data: {
-        jenisKegiatan,
-        deskripsi,
-        tanggal: new Date(),
-        status: "PENDING",
-        createdById: session.user.id,
-        ...(webAppId ? { webAppId } : {}),
-      }
-    })
+  data: {
+    jenisKegiatan,
+    deskripsi,
+    tanggal: new Date(),
+    status: "PENDING",
+    createdById: session.user.id,
+    webAppId: webAppId ?? undefined,
+  }
+})
     console.log('[LAPORAN-AUTO] Created:', result.id)
     revalidatePath("/dashboard/laporan")
     return { success: true }
