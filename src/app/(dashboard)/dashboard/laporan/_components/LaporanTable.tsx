@@ -19,12 +19,12 @@ type Laporan = {
   status: ActivityStatus
   instruksi: string | null
   buktiUrl?: string | null
-  webAppId: string
+  webAppId: string | null
   webApp: {
     nama: string
     url: string
     skpd: { nama: string; singkatan: string }
-  }
+  } | null
 }
 
 type WebAppOption = {
