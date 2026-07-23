@@ -92,13 +92,13 @@ model ActivityReport {
   tanggal       DateTime
   status        ActivityStatus @default(PENDING)
   instruksi     String?
-  webAppId      String
-  webApp        WebApp         @relation(fields: [webAppId], references: [id])
+  webAppId      String?        // ← tambah ? di sini
+  webApp        WebApp?        @relation(fields: [webAppId], references: [id])
   createdById   String
   confirmedById String?
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
-  buktiUrl    String?
+  buktiUrl      String?
 
   @@index([webAppId])
   @@index([status])
