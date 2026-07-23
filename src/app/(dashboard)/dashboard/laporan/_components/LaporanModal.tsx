@@ -6,13 +6,14 @@ import { createLaporan, updateLaporan } from "@/actions/laporan"
 import { ImageUpload } from "@/components/ui/ImageUpload"
 import type { ActivityStatus } from "@prisma/client"
 
+
 type Laporan = {
   id: string
   jenisKegiatan: string
   deskripsi: string
   tanggal: Date
   status: ActivityStatus
-  webAppId: string
+  webAppId: string | null  // ← tambah | null
   buktiUrl?: string | null
 }
 
@@ -92,7 +93,7 @@ export function LaporanModal({ isOpen, onClose, laporan, webApps }: LaporanModal
 
         <div>
           <label className={labelClass}>Domain Terkait <span className="text-red-500">*</span></label>
-          <select name="webAppId" defaultValue={laporan?.webAppId} required className={inputClass}>
+          <select name="webAppId" defaultValue={laporan?.webAppId ?? ""} required className={inputClass}>
             <option value="">— Pilih Domain —</option>
             {webApps.map((w) => (
               <option key={w.id} value={w.id}>

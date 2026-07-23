@@ -182,9 +182,9 @@ const [exportOptions, setExportOptions] = useState({
     const rows = filteredLaporans.map((lap, i) => ({
       "No": i + 1,
       "Jenis Kegiatan": lap.jenisKegiatan,
-      "Domain": lap.webApp.nama,
-      "URL": lap.webApp.url,
-      "SKPD": lap.webApp.skpd.singkatan,
+      "Domain": lap.webApp?.nama ?? "-",
+	  "URL": lap.webApp?.url ?? "-",
+      "SKPD": lap.webApp?.skpd.singkatan ?? "-",
       "Tanggal": new Date(lap.tanggal).toLocaleDateString("id-ID", {
         day: "numeric", month: "long", year: "numeric",
       }),
@@ -398,13 +398,13 @@ const [exportOptions, setExportOptions] = useState({
                       <p className="font-medium text-slate-900">{lap.jenisKegiatan}</p>
                       <p className="text-xs text-slate-400 mt-0.5 line-clamp-1">{lap.deskripsi}</p>
                       {lap.instruksi && (
-                        <p className="text-xs text-blue-600 mt-0.5 line-clamp-1">📋 {lap.instruksi}</p>
+                        <p className="text-xs lap.webApp?.text-blue-600 mt-0.5 line-clamp-1">📋 {lap.instruksi}</p>
                       )}
                     </td>
                     <td className="px-4 py-3">
-                      <p className="font-medium text-slate-700 text-xs">{lap.webApp.nama}</p>
+					  <p className="font-medium text-slate-700 text-xs">{lap.webApp?.nama ?? "-"}</p>
                       <span className="text-[10px] rounded bg-blue-50 px-1.5 py-0.5 font-semibold text-blue-600">
-                        {lap.webApp.skpd.singkatan}
+                        {lap.webApp?.skpd.singkatan ?? "-"}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-xs text-slate-500 whitespace-nowrap">

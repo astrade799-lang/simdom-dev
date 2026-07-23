@@ -451,9 +451,9 @@ export default async function DashboardPage() {
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-slate-800 truncate">{lap.jenisKegiatan}</p>
                     <p className="text-xs text-slate-400 mt-0.5">
-                      <span className="font-medium text-blue-600">{lap.webApp.skpd.singkatan}</span>
+					  <span className="font-medium text-blue-600">{lap.webApp?.skpd.singkatan ?? "-"}</span>
                       {" · "}
-                      {lap.webApp.nama}
+                      {lap.webApp?.nama ?? "-"}
                     </p>
                   </div>
                   <div className="flex flex-col items-end gap-1 flex-shrink-0">

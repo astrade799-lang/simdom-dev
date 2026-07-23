@@ -13,12 +13,12 @@ type LaporanDetail = {
   status: ActivityStatus
   instruksi: string | null
   buktiUrl?: string | null
-  webAppId: string
+  webAppId: string | null
   webApp: {
     nama: string
     url: string
     skpd: { nama: string; singkatan: string }
-  }
+  } | null
 }
 
 interface LaporanDetailModalProps {
@@ -55,12 +55,12 @@ export function LaporanDetailModal({ isOpen, onClose, laporan }: LaporanDetailMo
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Domain Terkait</p>
           <div className="flex items-center gap-2">
             <span className="rounded bg-blue-50 px-2 py-0.5 text-[11px] font-bold text-blue-600">
-              {laporan.webApp.skpd.singkatan}
+			  {laporan.webApp?.skpd.singkatan ?? "-"}
             </span>
-            <span className="text-sm font-medium text-slate-800">{laporan.webApp.nama}</span>
+			<span className="text-sm font-medium text-slate-800">{laporan.webApp?.nama ?? "-"}</span>
           </div>
           
-            <a href={`https://${laporan.webApp.url}`}
+			<a href={laporan.webApp ? `https://${laporan.webApp.url}` : "#"}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1 text-xs text-blue-600 hover:underline"
@@ -68,7 +68,7 @@ export function LaporanDetailModal({ isOpen, onClose, laporan }: LaporanDetailMo
             <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
             </svg>
-            {laporan.webApp.url}
+			{laporan.webApp?.url ?? "-"}
           </a>
         </div>
 

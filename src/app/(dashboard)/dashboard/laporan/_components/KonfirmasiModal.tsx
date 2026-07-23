@@ -13,11 +13,12 @@ type Laporan = {
   tanggal: Date
   status: ActivityStatus
   instruksi: string | null
+  webAppId: string | null
   webApp: {
     nama: string
     url: string
     skpd: { nama: string; singkatan: string }
-  }
+  }| null
 }
 
 interface KonfirmasiModalProps {
@@ -67,7 +68,7 @@ export function KonfirmasiModal({ isOpen, onClose, laporan }: KonfirmasiModalPro
             <ActivityBadge status={laporan.status} />
           </div>
           <p className="text-sm font-semibold text-gray-900">{laporan.jenisKegiatan}</p>
-          <p className="text-xs text-blue-600 font-mono">{laporan.webApp.url}</p>
+		  <p className="text-xs text-blue-600 font-mono">{laporan.webApp?.url ?? "-"}</p>
           <p className="text-xs text-gray-500">
             {new Date(laporan.tanggal).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}
           </p>

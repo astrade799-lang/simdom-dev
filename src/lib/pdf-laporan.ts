@@ -3,16 +3,18 @@ import autoTable from "jspdf-autotable"
 import type { ActivityStatus } from "@prisma/client"
 
 type LaporanItem = {
+  id: string
   jenisKegiatan: string
+  deskripsi: string
   tanggal: Date
-  status: ActivityStatus
-  instruksi: string | null
-  buktiUrl?: string | null  // ← TAMBAH
+  status: string
+  instruksi?: string | null  // ← tambah
+  buktiUrl?: string | null 
   webApp: {
     nama: string
     url: string
     skpd: { nama: string; singkatan: string }
-  }
+  } | null
 }
 
 const STATUS_LABEL: Record<ActivityStatus, string> = {
@@ -160,11 +162,11 @@ export async function generateLaporanPDF(
     body: laporans.map((lap, i) => [
       i + 1,
       lap.jenisKegiatan,
-      `${lap.webApp.nama}\n(${lap.webApp.skpd.singkatan})`,
+	  `${lap.webApp?.nama ?? "-"}\n(${lap.webApp?.skpd.singkatan ?? "-"})`,
       new Date(lap.tanggal).toLocaleDateString("id-ID", {
         day: "numeric", month: "short", year: "numeric",
       }),
-      STATUS_LABEL[lap.status],
+	  STATUS_LABEL[lap.status as ActivityStatus],
       lap.instruksi ?? "-",
     ]),
     headStyles: {
@@ -272,11 +274,11 @@ if (hasTTD && finalY < doc.internal.pageSize.getHeight() - 60) {
 
       doc.setFont("helvetica", "normal")
       doc.setFontSize(9)
-      doc.text(`Domain    : ${lap.webApp.nama} (${lap.webApp.skpd.singkatan})`, margin, 39)
+	  doc.text(`Domain    : ${lap.webApp?.nama ?? "-"} (${lap.webApp?.skpd.singkatan ?? "-"})`, margin, 39)
       doc.text(`Tanggal   : ${new Date(lap.tanggal).toLocaleDateString("id-ID", {
         day: "numeric", month: "long", year: "numeric",
       })}`, margin, 45)
-      doc.text(`Status    : ${STATUS_LABEL[lap.status]}`, margin, 51)
+	  doc.text(`Status    : ${STATUS_LABEL[lap.status as ActivityStatus]}`, margin, 51)
 
       if (lap.instruksi) {
         doc.text(`Instruksi : ${lap.instruksi}`, margin, 57)
