@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { saveAuditManual } from "../actions"
 import { useRouter } from "next/navigation"
+import { createLaporanFromAction } from "@/actions/laporan-auto"
 
 interface AuditData {
   securityGrade?: string | null
@@ -23,6 +24,9 @@ export function AuditManualForm({ webAppId, audit }: Props) {
 const router = useRouter()
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [showLaporan, setShowLaporan] = useState(false)
+const [deskripsiLaporan, setDeskripsiLaporan] = useState("")
+const [savingLaporan, setSavingLaporan] = useState(false)
   const [form, setForm] = useState({
     securityGrade: audit?.securityGrade ?? "",
     securityStatus: audit?.securityStatus ?? "BELUM_CEK",
@@ -35,14 +39,14 @@ const router = useRouter()
   
 
   async function handleSave() {
-    setSaving(true)
-    await saveAuditManual(webAppId, form)
-    setSaving(false)
-    setSaved(true)
-    setTimeout(() => {
-      router.push("/dashboard/audit")
-    }, 1000)
-  }
+  setSaving(true)
+  await saveAuditManual(webAppId, form)
+  setSaving(false)
+  setSaved(true)
+  setDeskripsiLaporan(`Melakukan audit teknis manual — security headers, DNS, teknologi, dan catatan diperbarui`)
+  setShowLaporan(true)
+  // Hapus setTimeout router.push dari sini
+}
 
   return (
     <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
@@ -136,6 +140,55 @@ const router = useRouter()
           {saving ? "Menyimpan..." : saved ? "✓ Tersimpan" : "Simpan Audit"}
         </button>
       </div>
+	  {showLaporan && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+    <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+      <h2 className="text-sm font-bold text-slate-800 mb-1">📋 Catat sebagai Laporan?</h2>
+      <p className="text-xs text-slate-400 mb-4">
+        Audit teknis ini bisa dicatat sebagai laporan kegiatan admin
+      </p>
+      <div>
+        <label className="text-xs font-semibold text-slate-500 uppercase block mb-1">
+          Deskripsi Kegiatan
+        </label>
+        <textarea
+          value={deskripsiLaporan}
+          onChange={e => setDeskripsiLaporan(e.target.value)}
+          rows={3}
+          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+        />
+      </div>
+      <div className="flex gap-2 mt-4">
+        <button
+          onClick={() => {
+            setShowLaporan(false)
+            router.push("/dashboard/audit")
+          }}
+          className="flex-1 border border-gray-200 text-gray-600 rounded-lg py-2 text-sm hover:bg-gray-50"
+        >
+          Lewati
+        </button>
+        <button
+          onClick={async () => {
+            setSavingLaporan(true)
+            await createLaporanFromAction({
+              jenisKegiatan: "Audit Teknis Domain",
+              deskripsi: deskripsiLaporan,
+              webAppId,
+            })
+            setSavingLaporan(false)
+            setShowLaporan(false)
+            router.push("/dashboard/audit")
+          }}
+          disabled={savingLaporan}
+          className="flex-1 bg-blue-600 text-white rounded-lg py-2 text-sm hover:bg-blue-700 disabled:opacity-50"
+        >
+          {savingLaporan ? "Menyimpan..." : "Simpan Laporan"}
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   )
 }
