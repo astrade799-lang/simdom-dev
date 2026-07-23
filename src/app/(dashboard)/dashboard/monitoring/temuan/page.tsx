@@ -189,6 +189,7 @@ export default async function TemuanPage({ searchParams }: Props) {
     findingId={f.id}
     currentStatus={f.status}
     judul={f.judul}
+    webAppId={f.webAppId}
   />
 </td>
               </tr>

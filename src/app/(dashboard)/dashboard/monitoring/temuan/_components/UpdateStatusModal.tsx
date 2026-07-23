@@ -2,26 +2,48 @@
 
 import { useState } from "react"
 import { updateFindingStatus } from "../actions"
+import { createLaporanFromAction } from "@/actions/laporan-auto"
 
 interface Props {
   findingId: string
   currentStatus: string
   judul: string
+  webAppId: string
 }
 
-export function UpdateStatusModal({ findingId, currentStatus, judul }: Props) {
+export function UpdateStatusModal({ findingId, currentStatus, judul, webAppId }: Props) {
   const [open, setOpen] = useState(false)
   const [status, setStatus] = useState(currentStatus)
   const [catatan, setCatatan] = useState("")
   const [loading, setLoading] = useState(false)
 
-  async function handleSubmit() {
-    setLoading(true)
-    await updateFindingStatus(findingId, status, catatan)
-    setLoading(false)
-    setOpen(false)
-    setCatatan("")
-  }
+  const [showLaporan, setShowLaporan] = useState(false)
+const [deskripsiLaporan, setDeskripsiLaporan] = useState("")
+const [savingLaporan, setSavingLaporan] = useState(false)
+
+async function handleSubmit() {
+  setLoading(true)
+  await updateFindingStatus(findingId, status, catatan)
+  setLoading(false)
+  setOpen(false)
+  setCatatan("")
+  // Tampilkan modal laporan
+  setDeskripsiLaporan(
+    `Menindaklanjuti temuan "${judul}" — status diubah ke ${status}${catatan ? `. Catatan: ${catatan}` : ""}`
+  )
+  setShowLaporan(true)
+}
+
+async function handleSaveLaporan() {
+  setSavingLaporan(true)
+  await createLaporanFromAction({
+    jenisKegiatan: "Tindak Lanjut Temuan",
+    deskripsi: deskripsiLaporan,
+    webAppId,
+  })
+  setSavingLaporan(false)
+  setShowLaporan(false)
+}
 
   return (
     <>
@@ -84,6 +106,45 @@ export function UpdateStatusModal({ findingId, currentStatus, judul }: Props) {
           </div>
         </div>
       )}
+
+      {showLaporan && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+    <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+      <h2 className="text-sm font-bold text-slate-800 mb-1">📋 Catat sebagai Laporan?</h2>
+      <p className="text-xs text-slate-400 mb-4">
+        Tindakan ini bisa dicatat sebagai laporan kegiatan admin
+      </p>
+
+      <div>
+        <label className="text-xs font-semibold text-slate-500 uppercase block mb-1">
+          Deskripsi Kegiatan
+        </label>
+        <textarea
+          value={deskripsiLaporan}
+          onChange={e => setDeskripsiLaporan(e.target.value)}
+          rows={3}
+          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+        />
+      </div>
+
+      <div className="flex gap-2 mt-4">
+        <button
+          onClick={() => setShowLaporan(false)}
+          className="flex-1 border border-gray-200 text-gray-600 rounded-lg py-2 text-sm hover:bg-gray-50"
+        >
+          Lewati
+        </button>
+        <button
+          onClick={handleSaveLaporan}
+          disabled={savingLaporan}
+          className="flex-1 bg-blue-600 text-white rounded-lg py-2 text-sm hover:bg-blue-700 disabled:opacity-50"
+        >
+          {savingLaporan ? "Menyimpan..." : "Simpan Laporan"}
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </>
   )
 }
